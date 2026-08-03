@@ -10,6 +10,7 @@ The host agent — Claude Code, Cursor, Codex, or a shell script — decides whe
 | ------- | --------- | ------------- |
 | Claude Code (`claude -p`) | [`references/claude.md`](references/claude.md) | [headless mode](https://code.claude.com/docs/en/headless), [CLI reference](https://code.claude.com/docs/en/cli-reference) |
 | Cursor Agent (`agent -p`) | [`references/cursor.md`](references/cursor.md) | [headless mode](https://cursor.com/docs/cli/headless), [CLI usage](https://cursor.com/docs/cli/using) |
+| Codex CLI (`codex exec`) | [`references/codex.md`](references/codex.md) | [non-interactive mode](https://learn.chatgpt.com/docs/non-interactive-mode), [`codex exec` reference](https://learn.chatgpt.com/docs/developer-commands?surface=cli#cli-codex-exec) |
 
 Add another harness by creating its reference file and registering it in `SKILL.md`.
 
