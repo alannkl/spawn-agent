@@ -1,26 +1,26 @@
 # Claude Code (`claude -p`)
 
-Before composing a command, run `claude --help`. Use <https://code.claude.com/docs/en/headless> and <https://code.claude.com/docs/en/cli-reference> to resolve behavior that the help output does not explain.
+Run `claude --help` before composing a command. For behavior not covered there, consult <https://code.claude.com/docs/en/headless> and <https://code.claude.com/docs/en/cli-reference>.
 
 ## Environment inheritance
 
-- A plain `claude -p` run auto-discovers hooks, skills, plugins, MCP servers, auto memory, and `CLAUDE.md` from the working directory and `~/.claude`, and it authenticates with the existing interactive login. Do not add `--bare`: it skips OAuth and keychain reads, so it cannot authenticate without a separate API key.
-- Pass what the subtask depends on explicitly instead of assuming it: `--permission-mode`, `--append-system-prompt`, `--add-dir`, `--model`.
+- A plain `claude -p` run discovers hooks, skills, plugins, MCP servers, auto memory, and `CLAUDE.md` from the working directory and `~/.claude`. It uses the existing interactive login. Do not add `--bare`: that flag skips OAuth and keychain reads, so authentication then requires a separate API key.
+- Pass every task-critical setting explicitly, including `--permission-mode`, `--append-system-prompt`, `--add-dir`, and `--model`.
 - Add `--strict-mcp-config` with `--mcp-config` when the run must see only the MCP servers you name.
 - Piped stdin is capped at 10MB; reference a file instead of piping beyond that.
 
 ## Permissions
 
-- Pre-approve every tool the subtask needs. An unapproved call can be skipped without making the run fail, leaving exit 0 and `is_error: false` even though no work was done.
-- Grant coarsely. The run's full toolset depends on the MCP servers and plugins configured locally, so do not try to enumerate exact tool names; name the built-in tools and shell commands the task needs and let the rest go unused.
+- Pre-approve every tool the subtask needs. Claude can skip an unapproved call without failing the run, leaving exit 0 and `is_error: false` even when no work was completed.
+- Grant permissions at practical boundaries. The available toolset depends on locally configured MCP servers and plugins, so specify the required built-in tools and shell commands without trying to enumerate every possible tool name.
 - Default to `--permission-mode acceptEdits` plus one `--allowedTools` entry per shell command the task needs. `acceptEdits` covers file writes and common filesystem commands, but other shell commands and network access still need an explicit entry.
-- Always pass the permission mode explicitly. Inheriting whatever `defaultMode` the machine has set makes the run's autonomy depend on local settings.
+- Always pass the permission mode explicitly. Otherwise, the run's autonomy depends on the machine's local `defaultMode`.
 - Keep the space before `*` in a permission rule: `Bash(git diff *)` prefix-matches, while `Bash(git diff*)` also matches `git diff-index`.
 - `--permission-mode bypassPermissions` (or `--dangerously-skip-permissions`) is the only fully unattended grant, and it also allows unrestricted shell and network access. Use it only in a sandbox or throwaway working copy, and say so when you do.
 
 ## Bounding
 
-- Check `claude --help` for a native turn or iteration limit. When none is available, wrap every run in the host's timeout mechanism, for example `timeout 600 claude ...`.
+- Check `claude --help` for a native turn or iteration limit. If none is available, wrap every run in the host's timeout mechanism, such as `timeout 600 claude ...`.
 - For API-billed runs, use `--max-budget-usd` when a monetary ceiling is required; it does not replace the wall-clock timeout.
 - Set `--fallback-model` for unattended runs so an overloaded primary model does not fail the run.
 
@@ -28,11 +28,11 @@ Before composing a command, run `claude --help`. Use <https://code.claude.com/do
 
 - `--output-format json` for programmatic use: `.result`, `.session_id`, `.total_cost_usd`. Add `--json-schema` for typed fields, returned in `.structured_output`.
 - `--output-format stream-json --verbose` for progress on long runs; add `--include-partial-messages` for token deltas.
-- Require the expected artifact even when the process exits 0: denied tool calls can still produce `is_error: false` and a plausible result. Treat every non-zero status, including timeout termination, as failure and report stderr and the exit code.
+- Verify the expected artifact even when the process exits 0: denied tool calls can still produce `is_error: false` and a plausible result. Treat every non-zero status, including timeout termination, as failure, and report stderr with the exit code.
 
 ## Resume
 
-- Capture the session ID from JSON output and pass `--resume "$session_id"`, or use `--continue` for the most recent conversation.
+- Capture the session ID from JSON output and pass it to `--resume "$session_id"`; use `--continue` only for the most recent conversation.
 - Run resume commands from the same directory: session lookup is scoped to the project directory and its git worktrees.
 
 ## Templates
@@ -59,7 +59,7 @@ timeout 300 claude -p "Extract the exported function names from src/index.ts" \
 
 ## Authentication
 
-- Spawned runs reuse the existing interactive login, so the work bills to the account already signed in. Never set `ANTHROPIC_API_KEY` or an `apiKeyHelper` to get a run working: that switches to separate pay-per-token billing.
+- Spawned runs reuse the existing interactive login, so usage is billed to the account already signed in. Never set `ANTHROPIC_API_KEY` or an `apiKeyHelper` merely to make a run work; doing so switches to separate pay-per-token billing.
 - If a run reports `Not logged in`, stop and tell the user to run `claude auth login`. Do not attempt to authenticate.
 
 ## Claude-specific gotchas

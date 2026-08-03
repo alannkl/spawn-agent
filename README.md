@@ -1,8 +1,8 @@
 # spawn-agent
 
-An agent skill for spawning a headless coding-agent CLI run as a subagent for a scoped subtask, with multi-harness support — one shared workflow, one reference file per supported CLI.
+An agent skill for delegating a scoped subtask to a headless coding-agent CLI. It supports multiple harnesses through one shared workflow and one tool-specific reference per CLI.
 
-The host agent — Claude Code, Cursor, Codex, or a shell script — decides when to shell out to a separate agent process, how to bound it, and how to verify what it did. [`SKILL.md`](SKILL.md) is a thin dispatcher holding the harness-agnostic workflow: trigger policy, availability precheck, permission doctrine, bounding, output parsing, and the failure modes that make a spawned run look successful when it did nothing. Everything tool-specific lives in one reference file per harness under [`references/`](references/), loaded only when that harness is targeted.
+The host—Claude Code, Cursor, Codex, or a shell script—decides when to launch a separate agent process, how to bound it, and how to verify its work. [`SKILL.md`](SKILL.md) is the thin dispatcher: it defines trigger policy, availability checks, permission requirements, run bounds, output handling, and protection against false success. Harness-specific flags, authentication, output contracts, and gotchas live under [`references/`](references/) and are loaded only for the selected CLI.
 
 ## Supported harnesses
 
@@ -12,7 +12,7 @@ The host agent — Claude Code, Cursor, Codex, or a shell script — decides whe
 | Cursor Agent (`agent -p`) | [`references/cursor.md`](references/cursor.md) | [headless mode](https://cursor.com/docs/cli/headless), [CLI usage](https://cursor.com/docs/cli/using) |
 | Codex CLI (`codex exec`) | [`references/codex.md`](references/codex.md) | [non-interactive mode](https://learn.chatgpt.com/docs/non-interactive-mode), [`codex exec` reference](https://learn.chatgpt.com/docs/developer-commands?surface=cli#cli-codex-exec) |
 
-Add another harness by creating its reference file and registering it in `SKILL.md`.
+To support another harness, add its reference file and register it in `SKILL.md`.
 
 ## Installation
 
@@ -26,7 +26,7 @@ Omit `-g` for a project-local install. Use `npx skills add alannkl/spawn-agent -
 
 ### Manual
 
-This repository is itself the skill directory. Clone it, then copy or symlink it into your agent's skills path:
+This repository is the skill directory. Clone it, then copy or symlink it into your agent's skills path:
 
 | Scope   | Universal (Cursor, Codex, Claude Code, and others) | Agent-specific (also supported)          |
 | ------- | -------------------------------------------------- | ---------------------------------------- |
@@ -37,7 +37,7 @@ This repository is itself the skill directory. Clone it, then copy or symlink it
 git clone git@github.com:alannkl/spawn-agent.git ~/.agents/skills/spawn-agent
 ```
 
-If an agent does not read `~/.agents/skills/` directly, symlink from there:
+If your agent does not read `~/.agents/skills/` directly, link the skill into an agent-specific path:
 
 ```bash
 ln -sfn ~/.agents/skills/spawn-agent ~/.claude/skills/spawn-agent
@@ -45,9 +45,9 @@ ln -sfn ~/.agents/skills/spawn-agent ~/.claude/skills/spawn-agent
 
 ## Design notes
 
-- **Thin dispatcher, per-harness references.** The shared doctrine (self-contained prompt → pre-authorize → bound → verify the artifact, never trust exit 0) lives once in `SKILL.md`; flags, permission syntax, auth, and gotchas are per-harness and load on demand.
-- **Installed-check up front, login-check reactively.** `command -v` gates dispatch, but auth is probed by running the command and handling the harness's not-logged-in error — there is no verified cheap auth-status command to rely on, and credentials are never inlined to make a run work.
-- **Unsupported harness → say so.** If no reference file exists for the requested CLI, the skill refuses to improvise flags from memory rather than producing plausible-but-wrong commands.
+- **Thin dispatcher, per-harness references.** `SKILL.md` defines the shared sequence: write a self-contained prompt, pre-authorize the required tools, bound the run, and verify the artifact instead of trusting exit 0. Each harness reference owns its flags, permission syntax, authentication guidance, and gotchas.
+- **Check installation first; handle login errors reactively.** `command -v` gates dispatch. Authentication is checked by running the command and handling a not-logged-in error; credentials are never inlined to force a run to work.
+- **Reject unsupported harnesses explicitly.** If the requested CLI has no reference file, the skill offers a supported harness instead of improvising plausible but incorrect flags.
 
 ## License
 
