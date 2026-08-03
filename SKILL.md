@@ -1,6 +1,6 @@
 ---
 name: spawn-agent
-description: Spawn a headless coding-agent CLI run (e.g. `claude -p`) as a subagent for a scoped subtask, from an agent session or a script. Use when the user asks to delegate work to another agent instance, run an agent CLI non-interactively or headlessly, script or automate a headless agent run, add an agent to a build or CI step, or fan work out across isolated sessions; do not use when the host's own subagent, task, or agent tool already fits, or for interactive agent sessions.
+description: Spawn a headless coding-agent CLI run (for example, `claude -p` or `agent -p`) as a subagent for a scoped subtask. Use when the user asks to delegate work to another agent instance, run an agent CLI non-interactively or headlessly, script or automate a headless agent run, add an agent to a build or CI step, or fan work out across isolated sessions; do not use when the host's own subagent, task, or agent tool already fits, or for interactive agent sessions.
 ---
 
 # Spawn Agent
@@ -9,11 +9,12 @@ Shell out to a coding-agent CLI in headless mode so a separate agent process per
 
 ## Supported harnesses
 
-| Harness | CLI | Reference | Status |
-| ------- | --- | --------- | ------ |
-| Claude Code | `claude` | `references/claude.md` | verified against live runs |
+| Harness | CLI | Reference |
+| ------- | --- | --------- |
+| Claude Code | `claude` | `references/claude.md` |
+| Cursor Agent | `agent` | `references/cursor.md` |
 
-If the user asks for a harness with no reference file here (for example Cursor or Codex), say this skill does not support it yet and offer a supported one. Do not improvise flags for an unsupported CLI from memory; headless flags differ across tools and releases.
+If the user asks for a harness with no reference file here (for example Codex), say this skill does not support it yet and offer a supported one. Do not improvise flags for an unsupported CLI from memory; headless flags differ across tools and releases.
 
 ## Dispatch
 

@@ -6,11 +6,12 @@ The host agent — Claude Code, Cursor, Codex, or a shell script — decides whe
 
 ## Supported harnesses
 
-| Harness | Reference | Official docs | Status |
-| ------- | --------- | ------------- | ------ |
-| Claude Code (`claude -p`) | [`references/claude.md`](references/claude.md) | [headless mode](https://code.claude.com/docs/en/headless), [CLI reference](https://code.claude.com/docs/en/cli-reference) | verified against live runs |
+| Harness | Reference | Official docs |
+| ------- | --------- | ------------- |
+| Claude Code (`claude -p`) | [`references/claude.md`](references/claude.md) | [headless mode](https://code.claude.com/docs/en/headless), [CLI reference](https://code.claude.com/docs/en/cli-reference) |
+| Cursor Agent (`agent -p`) | [`references/cursor.md`](references/cursor.md) | [headless mode](https://cursor.com/docs/cli/headless), [CLI usage](https://cursor.com/docs/cli/using) |
 
-Support for further harnesses (Cursor, Codex, and others) lands as additional reference files. A reference file is added only once its claims have been verified against a live run of that CLI, not taken from docs alone.
+Add another harness by creating its reference file and registering it in `SKILL.md`.
 
 ## Installation
 
