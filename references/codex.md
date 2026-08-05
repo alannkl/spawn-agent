@@ -33,6 +33,7 @@ Run `codex exec --help` before composing a command. For behavior not covered the
 
 ## Resume
 
+- Run `codex exec resume --help` before composing a resume command. It rejects `--cd`, `--sandbox`, and `--add-dir`; set its sandbox with `-c 'sandbox_mode="workspace-write"'`.
 - Continue a recorded session with `codex exec resume <session_id> "<follow-up>"`. Use `codex exec resume --last "<follow-up>"` only for the most recent session in the current working directory.
 - Resume from the same working directory unless the caller intentionally targets another session scope. Add `--all` to `--last` only when it must consider sessions outside the current directory's history.
 - Do not use `--ephemeral` when the run may need to resume; ephemeral runs do not persist session files.
@@ -64,6 +65,10 @@ timeout 300 codex exec --cd "$PWD" --model "$codex_model_id" \
   --sandbox read-only -c 'approval_policy="never"' --strict-config \
   --output-schema ./schema.json --output-last-message ./result.json \
   "Extract the exported function names from src/index.ts"
+
+timeout 900 codex exec resume --model "$codex_model_id" \
+  -c 'approval_policy="never"' -c 'sandbox_mode="workspace-write"' \
+  --strict-config --json "$thread_id" "Continue the task"
 ```
 
 After an editing run, require a terminal success event and an artifact check such as `git status --short`, `git diff --check`, the relevant tests, or direct file inspection.
