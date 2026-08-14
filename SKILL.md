@@ -1,6 +1,6 @@
 ---
 name: spawn-agent
-description: Spawn a headless coding-agent CLI run (such as `claude -p`, `agent -p`, or `codex exec`) for one scoped subtask. Use when the user asks to delegate work to another agent instance, run an agent CLI non-interactively, automate a headless agent in a script, build, or CI step, or fan work out across isolated sessions. Do not use for interactive agent sessions or when the host's own subagent, task, or agent tool already fits.
+description: Spawn a headless coding-agent CLI run (such as `agy -p`, `claude -p`, `agent -p`, or `codex exec`) for one scoped subtask. Use when the user asks to delegate work to another agent instance, run an agent CLI non-interactively, automate a headless agent in a script, build, or CI step, or fan work out across isolated sessions. Do not use for interactive agent sessions or when the host's own subagent, task, or agent tool already fits.
 ---
 
 # Spawn Agent
@@ -11,6 +11,7 @@ Use a supported coding-agent CLI in headless mode to run one self-contained subt
 
 | Harness | CLI | Reference |
 | ------- | --- | --------- |
+| Google Antigravity CLI | `agy` | `references/antigravity.md` |
 | Claude Code | `claude` | `references/claude.md` |
 | Cursor Agent | `agent` | `references/cursor.md` |
 | Codex CLI | `codex` | `references/codex.md` |

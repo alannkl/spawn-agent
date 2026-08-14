@@ -2,12 +2,13 @@
 
 An agent skill for delegating a scoped subtask to a headless coding-agent CLI. It supports multiple harnesses through one shared workflow and one tool-specific reference per CLI.
 
-The host—Claude Code, Cursor, Codex, or a shell script—decides when to launch a separate agent process, how to bound it, and how to verify its work. [`SKILL.md`](SKILL.md) is the thin dispatcher: it defines trigger policy, availability checks, permission requirements, run bounds, output handling, and protection against false success. Harness-specific flags, authentication, output contracts, and gotchas live under [`references/`](references/) and are loaded only for the selected CLI.
+The host—Antigravity, Claude Code, Cursor, Codex, or a shell script—decides when to launch a separate agent process, how to bound it, and how to verify its work. [`SKILL.md`](SKILL.md) is the thin dispatcher: it defines trigger policy, availability checks, permission requirements, run bounds, output handling, and protection against false success. Harness-specific flags, authentication, output contracts, and gotchas live under [`references/`](references/) and are loaded only for the selected CLI.
 
 ## Supported harnesses
 
 | Harness | Reference | Official docs |
 | ------- | --------- | ------------- |
+| Google Antigravity CLI (`agy -p`) | [`references/antigravity.md`](references/antigravity.md) | [headless mode](https://antigravity.google/docs/cli/headless), [CLI permissions](https://antigravity.google/docs/cli/permissions) |
 | Claude Code (`claude -p`) | [`references/claude.md`](references/claude.md) | [headless mode](https://code.claude.com/docs/en/headless), [CLI reference](https://code.claude.com/docs/en/cli-reference) |
 | Cursor Agent (`agent -p`) | [`references/cursor.md`](references/cursor.md) | [headless mode](https://cursor.com/docs/cli/headless), [CLI usage](https://cursor.com/docs/cli/using) |
 | Codex CLI (`codex exec`) | [`references/codex.md`](references/codex.md) | [non-interactive mode](https://learn.chatgpt.com/docs/non-interactive-mode), [`codex exec` reference](https://learn.chatgpt.com/docs/developer-commands?surface=cli#cli-codex-exec) |
