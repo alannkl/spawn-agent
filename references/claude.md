@@ -1,10 +1,8 @@
 # Claude Code (`claude -p`)
 
-Run `claude --help` before composing a command. For behavior not covered there, consult <https://code.claude.com/docs/en/headless> and <https://code.claude.com/docs/en/cli-reference>.
-
 ## Environment inheritance
 
-- A plain `claude -p` run discovers hooks, skills, plugins, MCP servers, auto memory, and `CLAUDE.md` from the working directory and `~/.claude`. It uses the existing interactive login. Do not add `--bare`: that flag skips OAuth and keychain reads, so authentication then requires a separate API key.
+- A plain `claude -p` run discovers hooks, skills, plugins, MCP servers, auto memory, and `CLAUDE.md` from the working directory and `~/.claude`. It uses the existing interactive login. Do not add `--bare`: that skips OAuth and keychain reads, so authentication then needs a separate API key.
 - Pass every task-critical setting explicitly, including `--permission-mode`, `--append-system-prompt`, `--add-dir`, and `--model`.
 - Add `--strict-mcp-config` with `--mcp-config` when the run must see only the MCP servers you name.
 - Piped stdin is capped at 10MB; reference a file instead of piping beyond that.
@@ -12,15 +10,15 @@ Run `claude --help` before composing a command. For behavior not covered there, 
 ## Permissions
 
 - Pre-approve every tool the subtask needs. Claude can skip an unapproved call without failing the run, leaving exit 0 and `is_error: false` even when no work was completed.
-- Grant permissions at practical boundaries. The available toolset depends on locally configured MCP servers and plugins, so specify the required built-in tools and shell commands without trying to enumerate every possible tool name.
-- Default to `--permission-mode acceptEdits` plus one `--allowedTools` entry per shell command the task needs. `acceptEdits` covers file writes and common filesystem commands, but other shell commands and network access still need an explicit entry.
-- Always pass the permission mode explicitly. Otherwise, the run's autonomy depends on the machine's local `defaultMode`.
+- Grant permissions at practical boundaries. The available toolset depends on locally configured MCP servers and plugins, so name the required built-in tools and shell commands without enumerating every possible tool.
+- Default to `--permission-mode acceptEdits` plus one `--allowedTools` entry per shell command the task needs. `acceptEdits` covers file writes and common filesystem commands; other shell commands and network access still need an explicit entry.
+- Always pass the permission mode explicitly. Otherwise autonomy depends on the machine's local `defaultMode`.
 - Keep the space before `*` in a permission rule: `Bash(git diff *)` prefix-matches, while `Bash(git diff*)` also matches `git diff-index`.
-- `--permission-mode bypassPermissions` (or `--dangerously-skip-permissions`) is the only fully unattended grant, and it also allows unrestricted shell and network access. Use it only in a sandbox or throwaway working copy, and say so when you do.
+- `--permission-mode bypassPermissions` (or `--dangerously-skip-permissions`) is the only fully unattended grant, and it also allows unrestricted shell and network access. Use it only in a sandbox or throwaway working copy, and say so.
 
 ## Bounding
 
-- Check `claude --help` for a native turn or iteration limit. If none is available, wrap every run in the host's timeout mechanism, such as `timeout 600 claude ...`.
+- Wrap every run in the host's timeout, such as `timeout 600 claude ...`.
 - For API-billed runs, use `--max-budget-usd` when a monetary ceiling is required; it does not replace the wall-clock timeout.
 - Set `--fallback-model` for unattended runs so an overloaded primary model does not fail the run.
 
@@ -59,10 +57,11 @@ timeout 300 claude -p "Extract the exported function names from src/index.ts" \
 
 ## Authentication
 
-- Spawned runs reuse the existing interactive login, so usage is billed to the account already signed in. Never set `ANTHROPIC_API_KEY` or an `apiKeyHelper` merely to make a run work; doing so switches to separate pay-per-token billing.
+- Spawned runs reuse the existing interactive login, so usage is billed to the account already signed in. Never set `ANTHROPIC_API_KEY` or an `apiKeyHelper` merely to make a run work; that switches to separate pay-per-token billing.
 - If a run reports `Not logged in`, stop and tell the user to run `claude auth login`. Do not attempt to authenticate.
 
 ## Claude-specific gotchas
 
 - Do not use `claude mcp serve` to run a subtask; it exposes Claude Code's tools to another MCP client. Call `claude -p` directly.
 - For callbacks, tool-approval hooks, or native message objects, point the user at the Python or TypeScript Agent SDK instead of stretching the CLI.
+- Consult `claude --help` or the docs only for uncovered behavior or after a flag or output failure: <https://code.claude.com/docs/en/headless> and <https://code.claude.com/docs/en/cli-reference>.
